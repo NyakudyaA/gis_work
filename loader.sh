@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#set environment variable for pg latin to work in current session
+
+export PGCLIENTENCODING=latin1
+
 DATA_PATH=/home/admire/Documents/workingfiles/ngi/data
 
 

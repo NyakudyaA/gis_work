@@ -66,7 +66,7 @@ function load_shp {
        for file in `ls *.shp`;
        do
           echo  "Loading" $file;
-          ogr2ogr -progress -append -skipfailures -a_srs "EPSG:4326" -nlt PROMOTE_TO_MULTI -gt 65536 -addfields -f "PostgreSQL" PG:"dbname=ngi2014 user=admire  password=babyrasta port=5433" $file
+          ogr2ogr -progress -append -skipfailures -a_srs "EPSG:4326" -nlt PROMOTE_TO_MULTI -gt 65536 -addfields -lco GEOMETRY_NAME=geom -f "PostgreSQL" PG:"dbname=ngi2014 user=admire  password=babyrasta port=5433" $file
 
        done
 }
