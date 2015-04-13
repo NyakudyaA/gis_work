@@ -15,6 +15,8 @@ cd ${DATA_PATH}
 source functions.sh
 
 #load all the ziped files into the database
+
+#load all files within folders like 2930
 for file in   *.zip; do
     echo $file;
     if [[  ${#file} -eq 8   ]]; then
@@ -23,49 +25,54 @@ for file in   *.zip; do
         rename_files
         remove
         trim
+        extra
         load_shp
         cd ..   
     fi
 done
 
+#load all files within folders like 2930_prj
 for file in  *.zip; do
     echo $file;
     if [[  ${#file} -eq 12   ]]; then
-        
         unzip $file
         cd  ${file%.*}
-        rename_prj
+        strip_F
+        rename_files
         remove
-        trim        
+        trim
+        extra        
         load_shp
         cd ..    
     fi
 done
 
-
+#load all files within folders like 2930_2426
 for file in  *.zip; do
     echo $file;
-    if [[  ${#file} -eq 13  ]]; then
-        
+    if [[  ${#file} -eq 13  ]]; then 
         unzip $file
         cd  ${file%.*}
         joined
         remove
-        trim        
+        trim 
+        extra       
         load_shp
         cd ..   
     fi
 done
 
+#load all files within folders like 2930_2426_prj
 for file in  *.zip; do
     echo $file;
     if [[  ${#file} -eq 17   ]]; then
-        
         unzip $file
         cd  ${file%.*}
-        joined_prj
+        strip_F
+        joined
         remove
-        trim        
+        trim 
+        extra       
         load_shp
         cd ..    
     fi
