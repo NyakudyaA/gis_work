@@ -25,7 +25,7 @@ cd ${DATA_PATH}
 #load all files within folders like 2930
 for file in   *.zip; do
     echo $file;
-    if [[  ${#file} -eq 8   ]]; then
+    if [[ -f "$file" || ${#file} -eq 8   ]]; then
         unzip $file 
         cd  ${file%.*}
         rename_files        
@@ -34,7 +34,7 @@ for file in   *.zip; do
         load_shp
         cd ..
 #load all files within folders like 2930_prj        
-    elif [[ ${#file} -eq 12   ]]; then
+    elif [[ -f "$file" || ${#file} -eq 12   ]]; then
         unzip $file
         cd  ${file%.*}
         remove_first_character
@@ -44,7 +44,7 @@ for file in   *.zip; do
         load_shp
         cd .. 
 #load all files within folders like 2930_2426        
-    elif [[  ${#file} -eq 13  ]]; then
+    elif [[ -f "$file" || ${#file} -eq 13  ]]; then
         unzip $file
         cd  ${file%.*}
         renaming        
@@ -53,7 +53,7 @@ for file in   *.zip; do
         load_shp
         cd ..
 #load all files within folders like 2930_2426_prj           
-    elif [[  ${#file} -eq 17   ]]; then
+    elif [[ -f "$file" || ${#file} -eq 17   ]]; then
         unzip $file
         cd  ${file%.*}
         remove_first_character
