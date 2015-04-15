@@ -13,10 +13,12 @@ then
 fi
 
 
-cd ${DATA_PATH}
 
 #we assume functions.sh is also in the base directory where you have the loading script
 source functions.sh
+
+cd ${DATA_PATH}
+
 
 #load all the ziped files into the database
 
@@ -26,61 +28,45 @@ for file in   *.zip; do
     if [[  ${#file} -eq 8   ]]; then
         unzip $file 
         cd  ${file%.*}
-        rename_files
-        remove
+        rename_files        
         trim
-        extra
+        remove_digits
         load_shp
-        cd ..   
-    fi
-done
-
-#load all files within folders like 2930_prj
-for file in  *.zip; do
-    echo $file;
-    if [[  ${#file} -eq 12   ]]; then
+        cd ..
+#load all files within folders like 2930_prj        
+    elif [[ ${#file} -eq 12   ]]; then
         unzip $file
         cd  ${file%.*}
-        strip_F
-        rename_files
-        remove
+        remove_first_character
+        rename_files        
         trim
-        extra        
+        remove_digits        
         load_shp
-        cd ..    
+        cd .. 
+#load all files within folders like 2930_2426        
+    elif [[  ${#file} -eq 13  ]]; then
+        unzip $file
+        cd  ${file%.*}
+        renaming        
+        trim 
+        remove_digits       
+        load_shp
+        cd ..
+#load all files within folders like 2930_2426_prj           
+    elif [[  ${#file} -eq 17   ]]; then
+        unzip $file
+        cd  ${file%.*}
+        remove_first_character
+        renaming       
+        trim 
+        remove_digits       
+        load_shp
+        cd ..                   
     fi
 done
 
-#load all files within folders like 2930_2426
-for file in  *.zip; do
-    echo $file;
-    if [[  ${#file} -eq 13  ]]; then 
-        unzip $file
-        cd  ${file%.*}
-        joined
-        remove
-        trim 
-        extra       
-        load_shp
-        cd ..   
-    fi
-done
 
-#load all files within folders like 2930_2426_prj
-for file in  *.zip; do
-    echo $file;
-    if [[  ${#file} -eq 17   ]]; then
-        unzip $file
-        cd  ${file%.*}
-        strip_F
-        joined
-        remove
-        trim 
-        extra       
-        load_shp
-        cd ..    
-    fi
-done
+
 
 
     
