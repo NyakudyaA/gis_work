@@ -15,6 +15,7 @@
 *   gdal_translate  -co COMPRESS=JPEG -co PHOTOMETRIC=YCBCR --config GDAL_TIFF_INTERNAL_MASK YES
 
 * Doing overviews
+
     gdaladdo -r average --config COMPRESS_OVERVIEW JPEG --config PHOTOMETRIC_OVERVIEW YCBCR --config INTERLEAVE_OVERVIEW PIXEL %s%s 2 4 8 16 32 64' %(target,name)
 
 
@@ -760,12 +761,14 @@
 
 
 
-## used to create a symbol in qgis with no borders
-     symbol = QgsFillSymbolV2.createSimple(
-     {QString('style'): QString('solid'), QString('color'): QString('255,0,0,255'),
+* used to create a symbol in qgis with no borders
+    ```
+    symbol = QgsFillSymbolV2.createSimple(
+    {QString('style'): QString('solid'), QString('color'): QString('255,0,0,255'),
     QString('style_border'): QString('no')})
     renderer.setSymbol(symbol)
     polygon_properties = {'color_border': color, 'style': 'yes', 'style_border': 'solid'}
+    ```
 
 
 
