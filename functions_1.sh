@@ -35,7 +35,7 @@ for file in   *.zip; do
 	characters
 	remove_other_char
 	remove_v
-        
+        remove_numbers
 	lowercase
         load_shp	
         cd ${DATA_PATH}
@@ -51,6 +51,7 @@ for file in   *.zip; do
 	characters
 	remove_other_char
 	remove_v
+        remove_numbers
 	lowercase
         load_shp
         cd ${DATA_PATH}
@@ -60,13 +61,13 @@ for file in   *.zip; do
     elif [[ -f "$file" || ${#file} -eq 13  ]]; then
         unzip $file
         cd  ${file%.*}
-	echo $file
-	remove_dates
 	remove_first_character        
+        remove_dates
 	renaming_blocks
 	characters
 	remove_other_char
 	remove_v
+        remove_numbers
 	lowercase
         load_shp
         cd ${DATA_PATH}
@@ -81,6 +82,7 @@ for file in   *.zip; do
 	characters
 	remove_other_char
 	remove_v
+        remove_numbers
 	lowercase
         load_shp
         cd ${DATA_PATH}

@@ -1,11 +1,11 @@
 #!/bin/bash
 
 #function to rename files within folder like 2427 and 2427_prj
-function rename_files {
+function remove_char {
         echo "Renaming files within folder with structure 3319.zip or 3319_prj"
         echo "----------------------------------------------------------------"
         for file in * ;
-        do mv $file  $(echo $file |sed 's/^.\{13\}//g'); 
+        do mv $file  $(echo $file |sed 's/^.\{5\}//g'); 
         done
        
 }
@@ -17,33 +17,77 @@ for file in *;do echo $file; if [[  $file == F*   ]];  then rename -v "s/^F//g" 
 }
 
 
+function characters {
+	for file in *;
+	do echo "removing ITIS50V_ from "  $file; 
+        if [[  $file == ITIS50V_*   ]];  then 
+            rename -v "s/^ITIS50V_//g" * ; 
+        else 
+            echo "nothing to do"; 
+        fi 
+        done
+}
+
+function remove_other_char {
+	for file in *;
+	do echo "remove itisv_ from  "$file; 
+	if [[  $file == itisv_*   ]];  then 
+	    rename -v "s/^itisv_//g" * ; 
+	else echo "nothing to do"; 
+        fi 
+        done
+}
+
+function remove_v {
+	for file in *;
+	do echo $file; 
+	if [[  $file == v_*   ]];  then 
+	    rename -v "s/^v_//g" * ; 
+	else 
+	echo "nothing to do"; 
+        fi 
+        done
+}
+
+function lowercase {
+#it is good tradition to keep files as lowercase without spaces
+	for f in *; 
+	do 
+	mv "$f" "`echo $f | tr "[:upper:]" "[:lower:]"`"; 
+	done
+}
 
 
 #function to rename by removing extra from digits from filenames
-function remove_digits {
-       for file in *;do echo $file; 
-       if [[  $file =~ [0-9]   ]];  
-       then rename -v "s/[0-9]//g" * && rename -v s/[_]_/_/ *; 
-       else echo "nothing to do"; 
+function remove_numbers {
+       for file in *;
+       do 
+          echo "removing digits from " $file; 
+       if [[  $file =~ [0-9]   ]];then 
+          rename -v "s/[0-9]//g" * && rename -v s/[_]_/_/ *; 
+       else 
+          echo "nothing to do"; 
        fi 
        done
 }
 
 
 #function to remove date from name of shapefiles. Since they were captured on different dates they prevented appending
-function trim {
-        echo "Renaming files by removing trailing letters"
-        echo "-------------------------------------------"
+function remove_dates {
+        echo "Renaming files by removing dates since it prevents appending !!"
+        echo "---------------------------------------------------------------"
         rename 's/_201.*?(?=.[^.]*$)//' *.*
    
 }      
 
 #functon to rename files withing folders like 3318_3317 and 3318_3317_prj
-function renaming {
+function renaming_blocks {
        echo "Renaming files within folder covering two blocks example 3318_3317"
        echo "------------------------------------------------------------------"
        for file in * ; 
-       do mv $file  $(echo $file |sed 's/^.\{18\}//g'); 
+       do
+	 echo  "Renaming" $file; 
+	 mv $file  $(echo $file |sed 's/^.\{10\}//g'); 
        done
 }
 
@@ -56,7 +100,7 @@ function load_shp {
        for file in `ls *.shp`;
        do
           echo  "Loading" $file;
-          ogr2ogr -progress -append -skipfailures -a_srs "EPSG:4326" -nlt PROMOTE_TO_MULTI -gt 65536 -addfields -lco GEOMETRY_NAME=geom -f "PostgreSQL" PG:"dbname=test user=admire  password=babyrasta port=5433" $file
+          ogr2ogr -progress -append -addfields -skipfailures -a_srs "EPSG:4326" -nlt PROMOTE_TO_MULTI -gt 200536 -addfields -lco GEOMETRY_NAME=geom -f "PostgreSQL" PG:"dbname=test user=admire  password=babyrasta port=5432" $file -lco SCHEMA=public
 
        done
 }

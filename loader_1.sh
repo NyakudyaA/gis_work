@@ -21,70 +21,57 @@ source functions.sh
 cd ${DATA_PATH}
 
 
+#load all the ziped files into the database
 
-
-#load all files within folders like 2930.zip
+#load all files within folders like 2930
 for file in   *.zip; do
     echo $file;
     if [[ -f "$file" || ${#file} -eq 8   ]]; then
         echo $file
         unzip $file 
         cd  ${file%.*}       
-        remove_dates
-	remove_char
-	characters
-	remove_other_char
-	remove_v
-        
-	lowercase
-        load_shp	
-        cd ${DATA_PATH}
+        trim_numbers
+	rename_files
+	dead_char
+	dead_char2
+	dead_char3
+        remove_digits
+        load_shp
+	cd ..
 	rm -r ${file%.*}
+        cd ${DATA_PATH}
 	
-#load all files within folders like 2930_prj.zip        
+#load all files within folders like 2930_prj        
     elif [[ -f "$file" || ${#file} -eq 12   ]]; then
         unzip $file
         cd  ${file%.*}
         remove_first_character
-	remove_dates
-	remove_char
-	characters
-	remove_other_char
-	remove_v
-	lowercase
+	trim_numbers
+	dead_char
+	dead_char2
+	dead_char3
+        remove_digits
         load_shp
         cd ${DATA_PATH}
-	rm -r ${file%.*} 
-
-#load all files within folders like 2930_2426.zip        
+#load all files within folders like 2930_2426        
     elif [[ -f "$file" || ${#file} -eq 13  ]]; then
         unzip $file
         cd  ${file%.*}
-	echo $file
-	remove_dates
-	remove_first_character        
-	renaming_blocks
-	characters
-	remove_other_char
-	remove_v
-	lowercase
+        renaming        
+        trim 
+        remove_digits       
         load_shp
         cd ${DATA_PATH}
-	rm -r ${file%.*}
 #load all files within folders like 2930_2426_prj           
     elif [[ -f "$file" || ${#file} -eq 17   ]]; then
         unzip $file
         cd  ${file%.*}
-        remove_first_character        
-        remove_dates
-	renaming_blocks
-	characters
-	remove_other_char
-	remove_v
-	lowercase
+        remove_first_character
+        renaming       
+        trim 
+        remove_digits       
         load_shp
-        cd ${DATA_PATH}
-	rm -r ${file%.*}                  
+        cd ${DATA_PATH}                   
     fi
 done
 
