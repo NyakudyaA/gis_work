@@ -733,7 +733,22 @@ Find users belonging to a group
 * getent group docker | awk -F: '{print $4}'
 
 
+* Download pdf and ingest into spatialite
+  ogr2ogr -f SQLite output.sqlite tanzania-latest.osm.pbf -progress -dsco SPATIALITE=YES -gt 65536 --config OSM_CONFIG_FILE ./osmconf.ini -lco SPATIAL_INDEX=NO
 
+  Download osmconf.ini from gdal api and put in the currect folder.
+
+* Add shapefiles to geopackage
+
+  ogr2ogr -f GPKG /tmp/test.gpkg /tmp/epsg4326/
+
+
+* adding a raster into geopackage
+
+  gdal_translate -of GPKG byte.tif byte.gpkg -co TILING_SCHEME=GoogleMapsCompatible
+
+  add to existing geopackage
+  gdal_translate -of GPKG new.tif existing.gpkg -co APPEND_SUBDATASET=YES -co RASTER_TABLE=new_table
 
 
 
