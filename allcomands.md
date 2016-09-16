@@ -735,6 +735,8 @@ Find users belonging to a group
 
 * Download pdf and ingest into spatialite
   ogr2ogr -f SQLite output.sqlite tanzania-latest.osm.pbf -progress -dsco SPATIALITE=YES -gt 65536 --config OSM_CONFIG_FILE ./osmconf.ini -lco SPATIAL_INDEX=NO
+  ogr2ogr -f SQLite db.sqlite tanzania-latest.osm.pbf -progress -dsco SPATIALITE=YES -gt 65536 --config OSM_CONFIG_FILE ./osmconf.ini -lco SPATIAL_INDEX=NO
+
 
   Download osmconf.ini from gdal api and put in the currect folder.
 
@@ -749,6 +751,15 @@ Find users belonging to a group
 
   add to existing geopackage
   gdal_translate -of GPKG new.tif existing.gpkg -co APPEND_SUBDATASET=YES -co RASTER_TABLE=new_table
+
+
+* install opendbcopy
+java -jar  /tmp/opendbcopy-0.51rc2-install.jar 
+
+
+* Enable nano in docker
+  export TERM=xterm
+
 
 
 
