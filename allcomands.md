@@ -760,8 +760,17 @@ java -jar  /tmp/opendbcopy-0.51rc2-install.jar
 * Enable nano in docker
   export TERM=xterm
 
+* Download landsat imagery using landsat util
+  docker run -it -v ~/landsat:/root/landsat developmentseed/landsat-util:latest landsat search --cloud 4 --start "january 1 2014" --end "january 10 2014" -p 009,045
+  docker run -it -v ~/landsat:/root/landsat developmentseed/landsat-util:latest landsat download LC80090452014008LGN00 --bands 432
+  landsat search --lat 38.9004204 --lon -77.0237117
 
 
+  landsat search --download --imageprocess --pansharpen  --cloud 4 --start "january 1 2014" --end "january 10 2014" pr 009 045
+
+* setup tomcat for geoserver
+edit /etc/default/tomcat7
+JAVA_OPTS="-Djava.awt.headless=true -server -Xrs -XX:PerfDataSamplingInterval=500 -Xmx16G -Xms16G -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:MaxPermSize=512m -XX:+UseParallelGC -XX:NewRatio=2"
 
 
 
