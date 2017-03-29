@@ -728,9 +728,9 @@
  while read p; do mv $p /raw/ ; sleep 6100;done <dir_move.txt
 
 
-Find users belonging to a group
+* Find users belonging to a group
 
-* getent group docker | awk -F: '{print $4}'
+  getent group docker | awk -F: '{print $4}'
 
 
 * Download pdf and ingest into spatialite
@@ -772,208 +772,269 @@ java -jar  /tmp/opendbcopy-0.51rc2-install.jar
 edit /etc/default/tomcat7
 JAVA_OPTS="-Djava.awt.headless=true -server -Xrs -XX:PerfDataSamplingInterval=500 -Xmx16G -Xms16G -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:MaxPermSize=512m -XX:+UseParallelGC -XX:NewRatio=2"
 
----using gdal within pyQGIS
+* using gdal within pyQGIS
 
-sourcefile =  "/home/admire/src/kartoza_work/AgriTechnovation/work/PPM/rooidopluis_32735.tif"
-output= "/tmp/outer.tif"    
-cmd = 'gdal_translate -b 1 -of GTiff  %s   %s' % (sourcefile,output)
-print cmd
-os.system(cmd)
+    sourcefile =  "/home/admire/src/kartoza_work/AgriTechnovation/work/PPM/rooidopluis_32735.tif"
+    output= "/tmp/outer.tif"    
+    cmd = 'gdal_translate -b 1 -of GTiff  %s   %s' % (sourcefile,output)
+    print cmd
+    os.system(cmd)
 
---Landsat 8 download
+    --Landsat 8 download
 
-landsat search --lat -34.002  --lon 20.463  -s "Jun 10 2013" -e "Sep 20 2015"
-
-
---rsync with continue
-
-rsync --partial --progress --rsh=ssh local_file user@host:remote_file
-
-rsync --partial --progress --rsh=ssh admire@Kirchhoff:*.dump .
+    landsat search --lat -34.002  --lon 20.463  -s "Jun 10 2013" -e "Sep 20 2015"
 
 
---install qgis client
-QGISPROJECTSDIR: /home/admire/QGIS_projects
-QGISURL: client.localhost
+    --rsync with continue
 
---increasing speed of fdw
+    rsync --partial --progress --rsh=ssh local_file user@host:remote_file
 
-BEGIN;
-SET LOCAL constraint_exclusion TO 'on';
-SELECT * FROM mogalakwena.uid1_zoning;
-END;
-
---combining foreign tables with mat views
-CREATE Materialized VIEW mogalakwena.uid1_zonings AS 
- WITH zoning AS (
-         SELECT a.geom,
-            a.sg21,
-            b.zone,
-            b.user_account_id
-           FROM mogalakwena.cadastre a
-             JOIN stand_usezones b ON a.sg21::text = b.sg21::text
-          WHERE b.user_account_id = 1
-        )
- SELECT zoning.sg21,
-    zoning.zone,
-    d.rgb,
-    zoning.geom
-   FROM zoning
-     LEFT JOIN zonestyles d ON d.usezone_name::text = zoning.zone::text;
-   
- create index on mogalakwena.uid1_zonings using GIST(geom);
- REFRESH MATERIALIZED VIEW  mogalakwena.uid1_zonings;
- 
- ALTER TABLE mogalakwena.uid1_zonings
-  OWNER TO admire;
-GRANT ALL ON TABLE mogalakwena.uid1_zonings TO admire;
-GRANT SELECT ON TABLE mogalakwena.uid1_zonings TO web;
-
-Refreshing needs to be done manually so either use a crontab
-
---Refreshing materialised view
-create Materialized VIEW matview.places as 
-select i.geometry, n.* from matview.index1in10k AS i INNER JOIN matview.images as  n ON i."tile_name" = n."tilename";
-
-CREATE OR REPLACE FUNCTION trig_refresh_places() RETURNS trigger AS
-$$
-BEGIN
-    REFRESH MATERIALIZED VIEW matview.places;
-    RETURN NULL;
-END;
-$$
-LANGUAGE plpgsql ;
+    rsync --partial --progress --rsh=ssh admire@Kirchhoff:*.dump .
 
 
-CREATE TRIGGER trig_01_refresh_places AFTER TRUNCATE OR INSERT OR UPDATE OR DELETE
-   ON matview.images FOR EACH STATEMENT
-   EXECUTE PROCEDURE trig_refresh_places();
+    --install qgis client
+    QGISPROJECTSDIR: /home/admire/QGIS_projects
+    QGISURL: client.localhost
 
-CREATE TRIGGER trig_01_refresh_places AFTER TRUNCATE OR INSERT OR UPDATE OR DELETE
-   ON matview.index1in10k FOR EACH STATEMENT
-   EXECUTE PROCEDURE trig_refresh_places();
+    --increasing speed of fdw
 
-select count(*) from matview.places;
+    BEGIN;
+    SET LOCAL constraint_exclusion TO 'on';
+    SELECT * FROM mogalakwena.uid1_zoning;
+    END;
 
-in terminal type crontab -e
-45 10 * * * /bin/bash /tmp/one.sh which means the script will run daily at 10:45pm
-
---added remote called gis-work in agritech repo
-so workflow is now. pull origin develop
-commit work and push to gis-work develop
-
---Mapserver viewer on browser
-
-http://localhost:8182/cgi-bin/mapserv?mode=browse&template=openlayers&layer=us&map=/maps/test.map
-
-or
-
-http://localhost/cgi-bin/mapserv? mode=browse& template=openlayers& layers=all& map=/var/www/workshop/itasca.map
-
---running docker qgis desktop modification
-Exec=gnome-terminal -e /usr/local/bin/run-qgis-2.10-in-docker.sh %U
-
---postgres database in recovery mode
-
-sudo su postgres
---launch the backend 
-/usr/lib/postgresql/9.3/bin/postgres --single -P -d 1 -c config_file=/etc/postgresql/9.3/main/postgresql.conf dwaregister
-vacuum full anaylze
-
---example using case
-with tt as ( select greatest(value) as X1 , (greatest(value) -  (case when least(value) < 0 THEN 0 ELSE least(value) END )) as range_min OVER (ORDER BY id)  from ppm_surfaces limit 3)
-select * from tt limit 3;
-
---drop tables in schema
-
-psql -h localhost -p 5432 -U admire -d ngi -t -c "select 'drop table \"' || tablename || '\" cascade;' from pg_tables where schemaname='public'" | psql -h localhost -p 5432 -U admire -d ngi
-
---delete all folders leaving files active
-find -mindepth 1 -maxdepth 1 -type d -exec rm -r {} \;
-
---rename last character of string if it is underscore
-for file in * ;do echo $file;if [[  "$file" != "${file%_}" ]];then mv "$file" "${file%_}"; fi done
-
-
---wget continue after internet has gone down
-
-wget -c -t 0 --timeout=60 --waitretry=60 URL_of_file
-
---ssh errors timeout connections
-check logfile on  /var/log/auth.log
-
---commit to remote git repo
-git clone git@github.com:kartoza/AgriTechnovation.git
-cd AgriTechnovation
-git remote add gis git@github.com:NyakudyaA/AgriTechnovation.git
-git commit -a -m "bla bla bla"
-git push gis develop
-
---Dump database in docker container
-docker exec -ti agritechnovation-db /bin/bash -c "pg_dump -Fc -f /tmp/latest.dmp -h localhost -U docker gis"
-
---copy file from docker database to host
-
- docker cp agritechnovation-db:/tmp/latest.dmp .
-
- --test if mapserver mapfile works
-
- shp2img -m 1.map -o myimage.png -all_debug 5
-
-
---procedure postgresql
-CREATE or replace function sp_createuser(p_name character varying(20),p_username character varying(20), p_password character varying(20))
-Returns text as $$
-BEGIN
-    if ( select exists (select 1 from tbl_user where user_username = p_username) ) THEN
+    --combining foreign tables with mat views
+    CREATE Materialized VIEW mogalakwena.uid1_zonings AS 
+     WITH zoning AS (
+             SELECT a.geom,
+                a.sg21,
+                b.zone,
+                b.user_account_id
+               FROM mogalakwena.cadastre a
+                 JOIN stand_usezones b ON a.sg21::text = b.sg21::text
+              WHERE b.user_account_id = 1
+            )
+     SELECT zoning.sg21,
+        zoning.zone,
+        d.rgb,
+        zoning.geom
+       FROM zoning
+         LEFT JOIN zonestyles d ON d.usezone_name::text = zoning.zone::text;
+       
+     create index on mogalakwena.uid1_zonings using GIST(geom);
+     REFRESH MATERIALIZED VIEW  mogalakwena.uid1_zonings;
      
-        Return 'Username Exists !!';
-     
-    ELSE
-     
-        insert into tbl_user
-        (
-            user_name,
-            user_username,
-            user_password
-        )
-        values
-        (
-            p_name,
-            p_username,
-            p_password
-        );
-     
-    END IF;
-END$$ LANGUAGE plpgsql
+     ALTER TABLE mogalakwena.uid1_zonings
+      OWNER TO admire;
+    GRANT ALL ON TABLE mogalakwena.uid1_zonings TO admire;
+    GRANT SELECT ON TABLE mogalakwena.uid1_zonings TO web;
 
--linking docker containers
-docker run -d --volumes-from mapserving -v `pwd`/new:/data/h5_data --name mapgen kartoza/generator
-docker stop mapgen && docker rm mapgen && ./build.sh && docker run -d --volumes-from mapserving -v `pwd`/new:/data/h5_data --name mapgen kartoza/generator && docker exec -i -t mapgen bin/bash
+    Refreshing needs to be done manually so either use a crontab
+
+    --Refreshing materialised view
+    create Materialized VIEW matview.places as 
+    select i.geometry, n.* from matview.index1in10k AS i INNER JOIN matview.images as  n ON i."tile_name" = n."tilename";
+
+    CREATE OR REPLACE FUNCTION trig_refresh_places() RETURNS trigger AS
+    $$
+    BEGIN
+        REFRESH MATERIALIZED VIEW matview.places;
+        RETURN NULL;
+    END;
+    $$
+    LANGUAGE plpgsql ;
 
 
---Deleting duplicates
-DELETE FROM public.new_blocks
-WHERE geom IN (SELECT geom
-              FROM (SELECT geom,
-                             row_number() over (partition BY property_i ORDER BY property_i) AS rnum
-                     FROM public.new_blocks) t
-              WHERE t.rnum > 1);
+    CREATE TRIGGER trig_01_refresh_places AFTER TRUNCATE OR INSERT OR UPDATE OR DELETE
+       ON matview.images FOR EACH STATEMENT
+       EXECUTE PROCEDURE trig_refresh_places();
 
-#creating a buffer
-create table ples as 
-with big as (
-select gid,st_multi(st_transform(st_buffer(b.geom,200),32738)) as the_geom from re14_073_reseau_routier as b )
-select a.id,a.geom  from big as c,bf_cua_2007 as a where St_Intersects(a.geom,c.the_geom) = 't'
+    CREATE TRIGGER trig_01_refresh_places AFTER TRUNCATE OR INSERT OR UPDATE OR DELETE
+       ON matview.index1in10k FOR EACH STATEMENT
+       EXECUTE PROCEDURE trig_refresh_places();
 
---convert osm pbf to spatialite
-ogr2ogr -f SQLite output.sqlite south-africa-and-lesotho-latest.osm.pbf -progress -dsco SPATIALITE=YES -gt 65536 --config OSM_CONFIG_FILE ./osmconf.ini -lco SPATIAL_INDEX=YES
+    select count(*) from matview.places;
 
---error mounting windows partition
-sudo ntfsfix /dev/sda6
+    in terminal type crontab -e
+    45 10 * * * /bin/bash /tmp/one.sh which means the script will run daily at 10:45pm
+
+    --added remote called gis-work in agritech repo
+    so workflow is now. pull origin develop
+    commit work and push to gis-work develop
+
+    --Mapserver viewer on browser
+
+    http://localhost:8182/cgi-bin/mapserv?mode=browse&template=openlayers&layer=us&map=/maps/test.map
+
+    or
+
+    http://localhost/cgi-bin/mapserv? mode=browse& template=openlayers& layers=all& map=/var/www/workshop/itasca.map
+
+    --running docker qgis desktop modification
+    Exec=gnome-terminal -e /usr/local/bin/run-qgis-2.10-in-docker.sh %U
+
+    --postgres database in recovery mode
+
+    sudo su postgres
+    --launch the backend 
+    /usr/lib/postgresql/9.3/bin/postgres --single -P -d 1 -c config_file=/etc/postgresql/9.3/main/postgresql.conf dwaregister
+    vacuum full anaylze
+
+    --example using case
+    with tt as ( select greatest(value) as X1 , (greatest(value) -  (case when least(value) < 0 THEN 0 ELSE least(value) END )) as range_min OVER (ORDER BY id)  from ppm_surfaces limit 3)
+    select * from tt limit 3;
+
+    --drop tables in schema
+
+    psql -h localhost -p 5432 -U admire -d ngi -t -c "select 'drop table \"' || tablename || '\" cascade;' from pg_tables where schemaname='public'" | psql -h localhost -p 5432 -U admire -d ngi
+
+    --delete all folders leaving files active
+    find -mindepth 1 -maxdepth 1 -type d -exec rm -r {} \;
+
+    --rename last character of string if it is underscore
+    for file in * ;do echo $file;if [[  "$file" != "${file%_}" ]];then mv "$file" "${file%_}"; fi done
 
 
+    --wget continue after internet has gone down
 
+    wget -c -t 0 --timeout=60 --waitretry=60 URL_of_file
+
+    --ssh errors timeout connections
+    check logfile on  /var/log/auth.log
+
+    --commit to remote git repo
+    git clone git@github.com:kartoza/AgriTechnovation.git
+    cd AgriTechnovation
+    git remote add gis git@github.com:NyakudyaA/AgriTechnovation.git
+    git commit -a -m "bla bla bla"
+    git push gis develop
+
+    --Dump database in docker container
+    docker exec -ti agritechnovation-db /bin/bash -c "pg_dump -Fc -f /tmp/latest.dmp -h localhost -U docker gis"
+
+    --copy file from docker database to host
+
+     docker cp agritechnovation-db:/tmp/latest.dmp .
+
+     --test if mapserver mapfile works
+
+     shp2img -m 1.map -o myimage.png -all_debug 5
+
+
+    --procedure postgresql
+    CREATE or replace function sp_createuser(p_name character varying(20),p_username character varying(20), p_password character varying(20))
+    Returns text as $$
+    BEGIN
+        if ( select exists (select 1 from tbl_user where user_username = p_username) ) THEN
+         
+            Return 'Username Exists !!';
+         
+        ELSE
+         
+            insert into tbl_user
+            (
+                user_name,
+                user_username,
+                user_password
+            )
+            values
+            (
+                p_name,
+                p_username,
+                p_password
+            );
+         
+        END IF;
+    END$$ LANGUAGE plpgsql
+
+    -linking docker containers
+    docker run -d --volumes-from mapserving -v `pwd`/new:/data/h5_data --name mapgen kartoza/generator
+    docker stop mapgen && docker rm mapgen && ./build.sh && docker run -d --volumes-from mapserving -v `pwd`/new:/data/h5_data --name mapgen kartoza/generator && docker exec -i -t mapgen bin/bash
+
+
+    --Deleting duplicates
+    DELETE FROM public.new_blocks
+    WHERE geom IN (SELECT geom
+                  FROM (SELECT geom,
+                                 row_number() over (partition BY property_i ORDER BY property_i) AS rnum
+                         FROM public.new_blocks) t
+                  WHERE t.rnum > 1);
+
+    #creating a buffer
+    create table ples as 
+    with big as (
+    select gid,st_multi(st_transform(st_buffer(b.geom,200),32738)) as the_geom from re14_073_reseau_routier as b )
+    select a.id,a.geom  from big as c,bf_cua_2007 as a where St_Intersects(a.geom,c.the_geom) = 't'
+
+    --convert osm pbf to spatialite
+    ogr2ogr -f SQLite output.sqlite south-africa-and-lesotho-latest.osm.pbf -progress -dsco SPATIALITE=YES -gt 65536 --config OSM_CONFIG_FILE ./osmconf.ini -lco SPATIAL_INDEX=YES
+
+    --error mounting windows partition
+    sudo ntfsfix /dev/sda6
+
+
+    --- looping postgis tables and publishing them in geoserver
+    while read p; do
+      curl -u admire:babyrasta -v -XPOST -H 'Content-Type:text/xml' -d '<featureType><name>'$p'</name></featureType>' http://localhost:8080/geoserver/rest/workspaces/dwaregister/datastores/project/featuretypes;
+    done < table.txt 
+
+    -- mssql schema diagrams
+java -jar "schemaSpy_5.0.0.jar" -t mssql-jtds -db rivers2 -all  -host 196.220.60.243 -port 1444 -u riversuser2 -p ru123 -dp /tmp/jars/jtds-1.2.jar  -o "/tmp/"
+
+    -- add geometry column postgis
+        SELECT AddGeometryColumn('public', 'subplace_census_2001', 'geometry', 4326, 'MULTIPOLYGON', 2);
+
+    --sudo user new postgres
+    createuser -s -d -r -l -P -E admire
+
+
+    Checking master password in geoserver
+    curl -v -u admin:samuel1982 -XGET   http://localhost:8080/geoserver/rest/security/masterpw.xml
+
+    create a file called change.xml with the following
+    <masterPassword>
+  <oldMasterPassword>geoserver</oldMasterPassword>
+  <newMasterPassword>b0ng0z0z0</newMasterPassword>
+</masterPassword>
+
+   Then run curl -v -u admin:samuel1982 -XPUT -H "Content-type: text/xml" -d @change.xml http://localhost:8080/geoserver/rest/security/masterpw.xml
+
+   --sudo mkntfs /dev/sdXY to fix NTFS signature missing
+
+
+   --- creating a cutline
+   for file in `cat /home/admire/clip/small.txt`;do gdalwarp -cutline /home/admire/clip/small.shp -cl small -csql "select * from small where location = '${file}' " -crop_to_cutline   -co "TILED=YES" -co "COMPRESS=DEFLATE" -co "PREDICTOR=2" -co "ZLEVEL=9"  level1.vrt /data/imagenas/gaps/clips_sman/${file%.*}.tif;done
+
+    --- Using if in postgres
+        do $$
+        begin
+          IF EXISTS (SELECT * FROM management_areas_season WHERE block_id = '49') THEN
+           UPDATE management_areas_season
+                              SET  block_id=45, image_version=
+                              to_timestamp('20151218T085036', 'DD-MM-YYYY hh24:mi:ss')::timestamp without time zone,
+                              gridcode=0, geom=ST_GeometryFromText('MULTIPOLYGON (((2120817.75642468 -4060499.28879502, 2120823.07127974 -4060517.01519543, 2120820.39074188 -4060514.55401093, 2120816.33485871 -4060511.70951227, 2120811.37515567 -4060508.91222986, 2120805.80662121 -4060506.32933773, 2120800.4884125 -4060504.32284991, 2120817.75642468 -4060499.28879502)))', 4326)
+                              WHERE block_id = 45;
+        ELSE 
+           INSERT INTO management_areas_season(block_id, image_version, gridcode, geom)
+                                    SELECT 49, to_timestamp('20151208T085036', 'DD-MM-YYYY hh24:mi:ss')::timestamp without time zone,
+                                     0, ST_GeometryFromText('MULTIPOLYGON (((2120733.59651037 -4060520.19727719, 2120738.7194201 -4060540.00783399, 2120736.48713587 -4060535.25238897, 2120731.72041393 -4060524.70128452, 2120730.02403643 -4060521.43089946, 2120733.59651037 -4060520.19727719)))', 4326)
+                                    WHERE
+                                          NOT EXISTS (
+                                            SELECT * FROM management_areas_season WHERE block_id = 49);
+        END IF;
+        end
+        $$
+
+    -- mapserver xyz grid
+    http://localhost:8182/cgi-bin/mapserv?mode=tile&tilemode=gmap&tile={X}+{Y}+{Z}&layers=southafrica&map=/map/generic.map
+
+
+    --Publishing an image pyramid using curl geoserver
+
+    curl -u admire:samuel1982 -v -XPOST -H "Content-Type: application/xml" -d "<coverageStore><name>ngi_aerial_2017</name><workspace>kartoza</workspace><enabled>true</enabled></coverageStore>" http://localhost/geoserver/rest/workspaces/kartoza/coveragestores
+
+
+    curl -u admire:samuel1982 -v -XPUT -H "Content-type: text/plain" -d"file:F:///data/nasstore/ngi/ngi_2015" http://localhost:8080/geoserver/rest/workspaces/kartoza/coveragestores/ngi_aerial_2017/external.imagepyramid
 
 
 
