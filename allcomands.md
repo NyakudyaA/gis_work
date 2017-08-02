@@ -381,7 +381,7 @@
 
 * updating features
 
-    ffor table in `cat sg_new.txt`;do psql dwaregister -c "update $table set year='september_2014'";done 
+    for table in `cat sg_new.txt`;do psql dwaregister -c "update $table set year='september_2014'";done 
 
     for file in `ls *.shp`;do ogr2ogr -progress -append -skipfailures -a_srs "EPSG:4148" -nlt MULTIPOLYGON -f "PostgreSQL" PG:"dbname=dwaregister active_schema=sg_new " $file  -sql "SELECT  gid,comments,tag_value,tag_just,id from ${file%.*}";done
 
@@ -974,10 +974,9 @@ JAVA_OPTS="-Djava.awt.headless=true -server -Xrs -XX:PerfDataSamplingInterval=50
 
 
     --- looping postgis tables and publishing them in geoserver
-    while read p; do
-      curl -u admire:babyrasta -v -XPOST -H 'Content-Type:text/xml' -d '<featureType><name>'$p'</name></featureType>' http://localhost:8080/geoserver/rest/workspaces/dwaregister/datastores/project/featuretypes;
-    done < table.txt 
-
+    for file in `cat table.txt`;do 
+    curl -v -u admin:geoserver -X POST -H "Content-type: text/xml" -d "<featureType><name>$file</name></featureType>" http://localhost:8080/geoserver/rest/workspaces/geonode/datastores/univenda_db/featuretypes;done
+    
     -- mssql schema diagrams
 java -jar "schemaSpy_5.0.0.jar" -t mssql-jtds -db rivers2 -all  -host 196.220.60.243 -port 1444 -u riversuser2 -p ru123 -dp /tmp/jars/jtds-1.2.jar  -o "/tmp/"
 
@@ -1036,11 +1035,49 @@ java -jar "schemaSpy_5.0.0.jar" -t mssql-jtds -db rivers2 -all  -host 196.220.60
 
     curl -u admire:samuel1982 -v -XPUT -H "Content-type: text/plain" -d"file:F:///data/nasstore/ngi/ngi_2015" http://localhost:8080/geoserver/rest/workspaces/kartoza/coveragestores/ngi_aerial_2017/external.imagepyramid
 
+    --calendar lightning
+    https://apidata.googleusercontent.com/caldav/v2/something@gmail.com/events
+
+    --Export to csv from postgres
+    for table in `cat table.txt`;do psql -d gis -p 5432 -U docker -h localhost -c "COPY (SELECT * FROM $table limit 50 )  TO '/tmp/exports/$table.csv' DELIMITER ',' CSV HEADER";done
+
+    --expression make text bold
+    activate data defined
+    CASE WHEN "Style" LIKE '%2016%' THEN 1 ELSE 0 END
 
 
+    -- create user in db
+    createuser -s -d -r -l -P -E admire
 
+    --loop tables in schema and change their schema
 
+    DO
+    $$
+    DECLARE
+        row record;
+    BEGIN
+        FOR row IN SELECT tablename FROM pg_tables WHERE schemaname = 'public' and tablename NOT IN ('spatial_ref_sys')-- and other conditions, if needed
+        LOOP
+            EXECUTE 'ALTER TABLE public.' || quote_ident(row.tablename) || ' SET SCHEMA "utm31n";';
+        END LOOP;
+    END;
+    $$;
 
+   -- change views from one schema to another
+    DO
+    $$
+    DECLARE
+        row record;
+    BEGIN
+        FOR row IN SELECT table_name FROM information_schema.views WHERE table_schema = 'public' -- and other conditions, if needed
+        LOOP
+            EXECUTE 'ALTER TABLE public.' || quote_ident(row.table_name) || ' SET SCHEMA "utm31n";';
+        END LOOP;
+    END;
+    $$;
+
+    -- ssh keys for /gis/.ssh
+    password : sweet wife
 
 
 
