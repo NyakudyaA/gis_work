@@ -617,9 +617,9 @@
 
 * rsync with continue
 
-    rsync --partial --progress --rsh=ssh local_file user@host:remote_file
+    rsync -avvz --partial --progress --rsh=ssh local_file user@host:remote_file
 
-    rsync --partial --progress --rsh=ssh admire@Kirchhoff:*.dump .
+    rsync -avvz --partial --progress --rsh=ssh admire@Kirchhoff:*.dump .
 
 
 * install qgis client
@@ -1079,6 +1079,19 @@ java -jar "schemaSpy_5.0.0.jar" -t mssql-jtds -db rivers2 -all  -host 196.220.60
     -- ssh keys for /gis/.ssh
     password : sweet wife
 
+    --sqlite case
+     UPDATE "index1in10k" 
+ set location = 
+ (
+ CASE WHEN length(tile_name)=7 THEN substr(tile_name,1,6)||'_'||'0'||substr(tile_name,7,1)  
+      WHEN length(tile_name)=8 THEN substr(tile_name,1,6)||'_'||''||substr(tile_name, 7,2)  
+  END
+ );
+
+ for file in `cat list.txt`;do gdalwarp -tr 1 -1 -tap -cutline gaps.shp -crop_to_cutline -dstalpha -co "COMPRESS=JPEG" -co "JPEG_QUALITY=75" -ovr AUTO -dstnodata 0 /data/ngi_aerial_2017/1/level1.vrt /data/aerial_2017/clips/1/$file.tif -csql "SELECT * FROM gaps WHERE location = '$file'";done
+
+-- auto mount usb in fstab
+/dev/sdb1  /gis/ auto nosuid,nodev,nofail 0 0
 
 
 
