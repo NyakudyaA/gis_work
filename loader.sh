@@ -23,53 +23,61 @@ cd ${DATA_PATH}
 
 #load all the ziped files into the database
 
-#load all files within folders like 2930
+#load all files within folders like 2229
 for file in   *.zip; do
-    echo $file;
+    echo ${file};
     if [[ -f "$file" || ${#file} -eq 8   ]]; then
-        echo $file
-        unzip $file 
-        cd  ${file%.*}       
-        trim_numbers
-	rename_files
-	dead_char
-	dead_char2
-	dead_char3
-        remove_digits
+        cd  ${file%.*}
+        remove_first_five_characters
+        remove_ITIS50V_characters
+        remove_other_char
+        remove_character_v
+        remove_dates
+        lowercase
         load_shp
-	cd ..
-	rm -r ${file%.*}
         cd ${DATA_PATH}
-	
-#load all files within folders like 2930_prj        
-    elif [[ -f "$file" || ${#file} -eq 12   ]]; then
-        unzip $file
+    #load all files within folders like 2930_prj
+
+    elif [[ -f "$file" || ${#file} -eq 8   ]]; then
+        echo ${file}
+        unzip ${file}
         cd  ${file%.*}
         remove_first_character
-	trim_numbers
-	dead_char
-	dead_char2
-	dead_char3
-        remove_digits
+        remove_first_five_characters
+        remove_ITIS50V_characters
+        remove_other_char
+        remove_character_v
+        remove_dates
+        lowercase
         load_shp
+	    cd ..
+	    rm -r ${file%.*}
         cd ${DATA_PATH}
+	
+
 #load all files within folders like 2930_2426        
     elif [[ -f "$file" || ${#file} -eq 13  ]]; then
-        unzip $file
+        unzip ${file}
         cd  ${file%.*}
-        renaming        
-        trim 
-        remove_digits       
+        renaming_merged_blocks
+        remove_ITIS50V_characters
+        remove_other_char
+        remove_character_v
+        remove_dates
+        lowercase
         load_shp
         cd ${DATA_PATH}
 #load all files within folders like 2930_2426_prj           
     elif [[ -f "$file" || ${#file} -eq 17   ]]; then
-        unzip $file
+        unzip ${file}
         cd  ${file%.*}
         remove_first_character
-        renaming       
-        trim 
-        remove_digits       
+        renaming_merged_blocks
+        remove_first_five_characters
+        remove_other_char
+        remove_character_v
+        remove_dates
+        lowercase
         load_shp
         cd ${DATA_PATH}                   
     fi
