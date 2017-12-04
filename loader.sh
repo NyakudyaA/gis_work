@@ -4,7 +4,7 @@
 
 export PGCLIENTENCODING=latin1
 
-DATA_PATH=/media/admire/data/data/ngi_shp/new/
+DATA_PATH=/gis/gis_data/ngi_data/raw_vectors
 
 
 
@@ -21,13 +21,16 @@ source functions.sh
 cd ${DATA_PATH}
 
 
-#load all the ziped files into the database
+#load all the zipped files into the database
 
 #load all files within folders like 2229
-for file in   *.zip; do
+for file in  `ls *.zip`; do
     echo ${file};
-    if [[ -f "$file" || ${#file} -eq 8   ]]; then
-        cd  ${file%.*}
+    if [[  ${#file} -eq 8   ]]; then
+        echo "file is 8 char long"
+        unzip ${file}
+        cd  ${PWD}/${file%.*}
+        rm *metadata*
         remove_first_five_characters
         remove_ITIS50V_characters
         remove_other_char
@@ -35,13 +38,15 @@ for file in   *.zip; do
         remove_dates
         lowercase
         load_shp
+        cd ..
         cd ${DATA_PATH}
     #load all files within folders like 2930_prj
 
-    elif [[ -f "$file" || ${#file} -eq 8   ]]; then
-        echo ${file}
+    elif [[  ${#file} -eq 12   ]]; then
+        echo "12 character long ${file}"
         unzip ${file}
-        cd  ${file%.*}
+        cd  ${PWD}/${file%.*}
+        rm *metadata*
         remove_first_character
         remove_first_five_characters
         remove_ITIS50V_characters
@@ -50,15 +55,16 @@ for file in   *.zip; do
         remove_dates
         lowercase
         load_shp
-	    cd ..
-	    rm -r ${file%.*}
+        cd ..
         cd ${DATA_PATH}
 	
 
 #load all files within folders like 2930_2426        
-    elif [[ -f "$file" || ${#file} -eq 13  ]]; then
+    elif [[  ${#file} -eq 13  ]]; then
+        echo "13 characters long"
         unzip ${file}
-        cd  ${file%.*}
+        cd  ${PWD}/${file%.*}
+        rm *metadata*
         renaming_merged_blocks
         remove_ITIS50V_characters
         remove_other_char
@@ -66,21 +72,26 @@ for file in   *.zip; do
         remove_dates
         lowercase
         load_shp
+        cd ..
         cd ${DATA_PATH}
 #load all files within folders like 2930_2426_prj           
-    elif [[ -f "$file" || ${#file} -eq 17   ]]; then
+    elif [[  ${#file} -eq 17   ]]; then
+        echo "17 characters"
         unzip ${file}
-        cd  ${file%.*}
+        cd  ${PWD}/${file%.*}
+        rm *metadata*
         remove_first_character
         renaming_merged_blocks
-        remove_first_five_characters
+        remove_ITIS50V_characters
         remove_other_char
         remove_character_v
         remove_dates
         lowercase
         load_shp
-        cd ${DATA_PATH}                   
+        cd ..
+        cd ${DATA_PATH}
     fi
+
 done
 
 

@@ -110,7 +110,9 @@ function load_shp {
        for file in `ls *.shp`;
        do
           echo  "Loading" ${file};
-          ogr2ogr -progress -append -addfields -skipfailures -a_srs "EPSG:4326" -nlt PROMOTE_TO_MULTI -gt 200536 -addfields -lco GEOMETRY_NAME=geom -f "PostgreSQL" PG:"dbname=test user=admire  password=babyrasta port=5432" ${file} -lco SCHEMA=public
+          ogr2ogr -progress -append -addfields -skipfailures -a_srs "EPSG:4326" -nlt PROMOTE_TO_MULTI -gt 200536 \
+          -addfields -lco GEOMETRY_NAME=geom -f "PostgreSQL" PG:"dbname=gis user=admire  password=babyrasta port=5432"\
+            ${file} -lco SCHEMA=public
 
        done
 }
