@@ -37,6 +37,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_last_underscore
         remove_dates
         remove_numbers
         lowercase
@@ -57,6 +58,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_last_underscore
         remove_dates
         remove_numbers
         lowercase
@@ -77,6 +79,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_last_underscore
         remove_dates
         remove_numbers
         lowercase
@@ -96,6 +99,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_last_underscore
         remove_dates
         remove_numbers
         lowercase

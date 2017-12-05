@@ -123,6 +123,15 @@ function renaming_merged_blocks {
        done
 }
 
+function remove_last_underscore{
+        for file in `ls *_.*`;
+        do
+        ext="${file##*.}";
+        non=${file::-5};
+        mv ${file} ${non}.${ext};
+        done
+
+}
 
 
 #function to load shapefiles and append into the database
