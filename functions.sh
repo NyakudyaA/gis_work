@@ -15,7 +15,8 @@ function remove_first_five_characters {
 function remove_first_character {
         echo "Removing first character F from names of files"
         echo "----------------------------------------------"
-        for file in *;do echo ${file};
+        for file in `ls F*`;
+        do echo ${file};
         if [[  ${file} == F*   ]];
             then rename -v "s/^F//g" * ;
             else echo "nothing to do";
@@ -27,7 +28,7 @@ function remove_first_character {
 function remove_ITIS50V_characters {
         echo "Remove ITIS50V_ from beginning of files "
         echo "----------------------------------------"
-        for file in *;
+        for file in `ls ITIS50V_*`;
         do echo "removing ITIS50V_ from "  ${file};
             if [[  ${file} == ITIS50V_*   ]];  then
                 rename -v "s/^ITIS50V_//g" * ;
@@ -38,7 +39,7 @@ function remove_ITIS50V_characters {
 }
 
 function remove_other_char {
-        for file in *;
+        for file in `ls itisv_*`;
         do echo "remove itisv_ from  "${file};
         if [[  ${file} == itisv_*   ]];  then
             rename -v "s/^itisv_//g" * ;
@@ -48,43 +49,43 @@ function remove_other_char {
 }
 
 function remove_character_v {
-        for file in *;
+        for file in `ls v_*`;
         do echo " character v_ from beginning of file ${file}";
-        if [[  ${file} == v_*   ]];  then
-            rename -v "s/^v_//g" * ;
-        else
-        echo "nothing to do";
+            if [[  ${file} == v_*   ]];  then
+                rename -v "s/^v_//g" * ;
+            else
+                echo "nothing to do";
             fi
-            done
+        done
 }
 
 function remove_character_0 {
-        for file in *;
+        for file in `ls 0v_*`;
         do echo " character v_ from beginning of file ${file}";
-        if [[  ${file} == 0v_*   ]];  then
-            rename -v "s/^0v_//g" * ;
-        else
-        echo "nothing to do";
+            if [[  ${file} == 0v_*   ]];  then
+                rename -v "s/^0v_//g" * ;
+            else
+                echo "nothing to do";
             fi
-            done
+        done
 }
 
 function remove_character_a {
-        for file in *;
+        for file in `ls _itis50v_*`;
         do echo " character v_ from beginning of file ${file}";
-        if [[  ${file} == _itis50v_*   ]];  then
-            rename -v "s/^_itis50v_//g" * ;
-        else
-        echo "nothing to do";
+            if [[  ${file} == _itis50v_*   ]];  then
+                rename -v "s/^_itis50v_//g" * ;
+            else
+                echo "nothing to do";
             fi
-            done
+        done
 }
 
 function lowercase {
 #it is good tradition to keep files as lowercase without spaces
         for f in *;
         do
-        mv "$f" "`echo ${f} | tr "[:upper:]" "[:lower:]"`";
+            mv "$f" "`echo ${f} | tr "[:upper:]" "[:lower:]"`";
         done
 }
 
@@ -94,11 +95,11 @@ function remove_numbers {
        for file in *;
        do 
           echo "removing digits from " ${file}; 
-       if [[  ${file} =~ [0-9]   ]];then 
-          rename -v "s/[0-9]//g" * && rename -v s/[_]_/_/ *; 
-       else 
-          echo "nothing to do"; 
-       fi 
+           if [[  ${file} =~ [0-9]   ]];then
+              rename -v "s/[0-9]//g" * && rename -v s/[_]_/_/ *;
+           else
+              echo "nothing to do";
+           fi
        done
 }
 
@@ -123,14 +124,21 @@ function renaming_merged_blocks {
        done
 }
 
-function remove_last_underscore{
+function remove_last_underscore {
+
+
         for file in `ls *_.*`;
         do
-        ext="${file##*.}";
-        non=${file::-5};
-        mv ${file} ${non}.${ext};
+            echo "removing the last trailing underscore";
+            ext="${file##*.}";
+            non=${file::-5};
+            i=${file:${#file}-5:1}
+            if [ ${i} = "_" ]; then
+                mv ${file} ${non}.${ext};
+            else
+                echo "skipping file already contains proper names"
+            fi
         done
-
 }
 
 
