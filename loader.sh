@@ -35,7 +35,10 @@ for file in  `ls *.zip`; do
         remove_ITIS50V_characters
         remove_other_char
         remove_character_v
+        remove_character_0
+        remove_character_a
         remove_dates
+        remove_numbers
         lowercase
         load_shp
         cd ..
@@ -52,7 +55,10 @@ for file in  `ls *.zip`; do
         remove_ITIS50V_characters
         remove_other_char
         remove_character_v
+        remove_character_0
+        remove_character_a
         remove_dates
+        remove_numbers
         lowercase
         load_shp
         cd ..
@@ -69,7 +75,10 @@ for file in  `ls *.zip`; do
         remove_ITIS50V_characters
         remove_other_char
         remove_character_v
+        remove_character_0
+        remove_character_a
         remove_dates
+        remove_numbers
         lowercase
         load_shp
         cd ..
@@ -85,7 +94,10 @@ for file in  `ls *.zip`; do
         remove_ITIS50V_characters
         remove_other_char
         remove_character_v
+        remove_character_0
+        remove_character_a
         remove_dates
+        remove_numbers
         lowercase
         load_shp
         cd ..

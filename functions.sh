@@ -58,6 +58,28 @@ function remove_character_v {
             done
 }
 
+function remove_character_0 {
+        for file in *;
+        do echo " character v_ from beginning of file ${file}";
+        if [[  ${file} == 0v_*   ]];  then
+            rename -v "s/^0v_//g" * ;
+        else
+        echo "nothing to do";
+            fi
+            done
+}
+
+function remove_character_a {
+        for file in *;
+        do echo " character v_ from beginning of file ${file}";
+        if [[  ${file} == _itis50v_*   ]];  then
+            rename -v "s/^_itis50v_//g" * ;
+        else
+        echo "nothing to do";
+            fi
+            done
+}
+
 function lowercase {
 #it is good tradition to keep files as lowercase without spaces
         for f in *;
