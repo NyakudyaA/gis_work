@@ -37,29 +37,13 @@
     gdal_retile.py -v -s_srs "EPSG:3857" -r cubic -levels 12 -ps 6144 6144 -co "TILED=YES" -co "COMPRESS=DEFLATE"  -co "PREDICTOR=2" -co "ZLEVEL=9" -co "BLOCKXSIZE=256" -co "BLOCKYSIZE=256" -targetDir /data/NAS/drakenstein_2013   --optfile /home/admire/drakenstein.txt
 
 
-
-
-
-* 15 May rsync files from local to remote server.
-
-    rsync --dry-run  -avv -e ssh /media/SAMSUNG/Drakenstein/mrsid_1km/ admire@superman:/home/admire/drakenstein_raw
-    rsync   -avv -e ssh /media/SAMSUNG/Drakenstein/mrsid_1km/ admire@superman:/home/admire/drakenstein_raw
-    rsync --dry-run -avz -F ../wyk.txt .
-
-* cloning a repository
-
-    git clone git://github.com/AfriSpatial/topostyle.git
-
-
-
-
-
 * connecting to server using nautilus
 
     sftp://servername
 
 
 * Cape Town gda_retile process for 8cm imagery (2013-07-06)
+
     gdal_retile.py -v -s_srs "+proj=tmerc +lat_0=0 +lon_0=19 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" -r cubic -levels 20 -ps 6144 6144 -co "TILED=YES" -co "COMPRESS=DEFLATE"  -co "PREDICTOR=2" -co "ZLEVEL=9" -co "BLOCKXSIZE=256" -co "BLOCKYSIZE=256" -targetDir /data/CT_2012_new --optfile /home/admire/new_capetown.txt
 
 * Cape Town gdal_retile
@@ -72,38 +56,18 @@
 * Port Elizabethe gdal_retile process for 10cm imagery (2013-12-06)
   gdal_retile.py -v -s_srs "+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" -r cubic -levels 15 -ps 6144 6144 -co "TILED=YES" -co "COMPRESS=DEFLATE"  -co "PREDICTOR=2" -co "ZLEVEL=9" -co "BLOCKXSIZE=256" -co "BLOCKYSIZE=256" -pyramidOnly -targetDir /data/CT_2012_new --optfile /home/admire/new_capetown.txt
 
-* copying from local machine and storing in local
-    rsync -chavzP --stats user@remote.host:/path/to/copy /path/to/local/storage
-
-* copying from server to local machine
-    rsync -chavzP --stats /path/to/copy user@host.remoted.from:/path/to/local/storage
-
-
-*  Using field Calculator to edit shapefile in QGIS
-    replace("Column_2",'Text2','Text1')
-
-*  To create a symbolic link in Unix
-   ln -s {target-filename} {symbolic-filename}
-   example: ln -s /webroot/home/httpd/test.com/index.php /home/vivek/index.php
-
-* creating an index shapefile use the following
-   gdaltindex doq_index.shp doq/*.tif
 
 * Updating the projection definition of Aerial Photos
+
   for file in `cat ethekwini.txt`;do python UpdateSRS_to_LO31.py $file;done
 
-*  Gdal_retile for ethekwini june 2013
-   gdal_retile.py -v -s_srs "+proj=tmerc +lat_0=0 +lon_0=31 +k=1 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=m +no_defs" -r cubic -levels 15 -ps 6144 6144 -co "TILED=YES" -co "COMPRESS=DEFLATE"  -co "PREDICTOR=2" -co "ZLEVEL=9" -co "BLOCKXSIZE=256" -co "BLOCKYSIZE=256"  -targetDir /data/CT_2012_new --optfile /home/admire/allimages.txt
 
 *  Checking files to see if gdal can open them and then copying the ones with a segmantation error
    for file in `cat path.txt`; do gdalinfo $file || cp $file /data/temp; done
 
 *  Printing the filename in case it did not open
    for file in `cat path.txt`; do gdalinfo $file || (echo $file && cp $file /data/temp); done
-
-    checking for amount of space left on the system use
-
-    df -h
+ 
 
 * In order to compile the latest gdal to use with the latest ubuntugis
 
@@ -140,22 +104,10 @@
   
     gdal_retile.py -v -s_srs "EPSG:3857" -r cubic -levels 20 -ps 6144 6144 -co "TILED=YES" -co "COMPRESS=DEFLATE"  -co "PREDICTOR=2" -co "ZLEVEL=9" -co "BLOCKXSIZE=256" -co "BLOCKYSIZE=256" -pyramidOnly -targetDir /data/imagenas/ngi_2012_pyramid/ --optfile /home/admire/ngi_2012.txt 
 
-* 9 December 2013
-    gksudo nautilus
-
 * In order to insert a line into a text file or aux file into a second line
     sed '/^bar/a this is the new line' text.txt
     where we insert into a line after bar
-
     use option -i to save the output
-
-
-
-* copying from local machine to remote server using either rsync
-    rsync -avvz *.TIF admire@superman:/home/admire/todo/
-
-*  copying from local machine to remote machine using scp
-   scp *.TIF admire@superman:/home/admire/todo/
 
 * converting a spatialite database for backward compatibility
 
@@ -177,9 +129,6 @@
 
     ln -s -t /data/work/ngi_2012 /data/nasmounttest/gaps/
 
-* restarting postgres
-
-    sudo service postgresql restart
 
 * creating a database on terminal
     createdb minisass-cms
@@ -209,12 +158,13 @@
     "bearing"  ||'°' ||   '\n' || '\n' ||  "distance"  || 'm'
 
 * bash script to make all leters of filenames lowercase
-
+    ```
     for f in *; do mv "$f" "`echo $f | tr "[:upper:]" "[:lower:]"`"; done
-
+    ```
 
 * bash replace space with underscore 
     find -name "* *" -type f | rename 's/ /_/g'
+
 
 * to do it in a folder first
 
@@ -232,7 +182,7 @@
 * looping a shapefile into another schema
     for file in `ls *.shp`;do shp2pgsql -s 4326 -c -D  -I -W LATIN1 $file sg_data.${file%.*} | psql  -d dwaregister;done
 
-* how to alter column lenght in postgresql
+* how to alter column length in postgresql
 
     ALTER TABLE sg_data.local_municipality ALTER COLUMN tag_value TYPE character varying(255);
 
@@ -263,15 +213,6 @@
 
 * How to specify a cluster on a terminal if it doesn't show up
     export PGCLUSTER=9.3/main
-
-
-* installing a virtualenv on ubuntu 14.04
-    sudo pip install virtualenv
-    mkdir sphinx
-    virtualenv sphinx
-    source sphinx/bin/activate
-    deactivate to get out of the environment
-
 
 
 * restore a database using postgis_restore.pl
@@ -337,7 +278,7 @@
     drop server mysql_fwd cascade; Drop extension mysql_fdw cascade;
 
 * installing binaries for ecw before compiling
-    wget http://meuk.technokrat.nl/libecwj2-3.3-2006-09-06.zip
+    wget http://meuk.technokrat.nl/libecwj2-3.3-2006-09-06.zip or wget http://www.kyngchaos.com/files/macosxport/libecwj2-3.3-2006-09-06.zip
     unzip ~/Downloads/libecwj2-3.3.2006-09-06.zip
     cd ~/Downloadslibecwj2-3.3.2006-09-06
     ./configure
@@ -423,7 +364,7 @@
 
 * update geom srid
 
-    for table in `cat sg_tables`; do psql -d sg -c "select updategeometrysrid('$table','wkb_geometry','4148')"; done
+    for table in `cat sg_tables`; do psql -d sg -c "select updategeometrysrid('$table','wkb_geometry','32734')"; done
 
 
 * geogig load
@@ -733,7 +674,7 @@
   getent group docker | awk -F: '{print $4}'
 
 
-* Download pdf and ingest into spatialite
+* Download pbf and ingest into spatialite
   ogr2ogr -f SQLite output.sqlite tanzania-latest.osm.pbf -progress -dsco SPATIALITE=YES -gt 65536 --config OSM_CONFIG_FILE ./osmconf.ini -lco SPATIAL_INDEX=NO
   ogr2ogr -f SQLite db.sqlite tanzania-latest.osm.pbf -progress -dsco SPATIALITE=YES -gt 65536 --config OSM_CONFIG_FILE ./osmconf.ini -lco SPATIAL_INDEX=NO
 
@@ -1093,32 +1034,174 @@ java -jar "schemaSpy_5.0.0.jar" -t mssql-jtds -db rivers2 -all  -host 196.220.60
 -- auto mount usb in fstab
 /dev/sdb1  /gis/ auto nosuid,nodev,nofail 0 0
 
+-- Change all tables and sequences names to a user
 
 
+for tbl in `psql -qAt -c "select tablename from pg_tables where schemaname = 'sg';" kartozagis` ; do  psql -c "alter table \"$tbl\" owner to mazano" kartozagis ; done
+
+for tbl in `psql -qAt -c "select sequence_name from information_schema.sequences where sequence_schema = 'sg';" kartozagis` ; do  psql -c "alter table sg.\"$tbl\" owner to mazano" kartozagis ; done
+
+-- updating ownership info in geonode layers
+
+- check owner id from poeple's profile
+  select * from people_profile
+
+  Then update the update base_resourcebase set owner_id = 1019 where owner_id = 1000;
+
+-- schema spy
+java -jar schemaSpy_5.0.0.jar -t pgsql -s public -db univenda -u admire -p babyrasta -host localhost -o /tmp -dp  postgresql-42.2.2.jar
+
+-- Setup debug in pycharm
+            import pydevd
+            pydevd.settrace('localhost', port=22000, stdoutToServer=True, stderrToServer=True)
+
+-- Import pg database into postgres backend geogig
+geogig --repo "postgresql://geogig-db/gis/public/gold?user=docker&password=docker" pg import --all --host db --port 5432 --database gis --user docker --password docker
+
+--geogig sequence
+geogig --repo "postgresql://geogig-db/gis/public/gold?user=docker&password=docker" init
+geogig --repo "postgresql://geogig-db/gis/public/gold?user=docker&password=docker" pg import --all --host db --port 5432 --database gis --user docker --password docker
+geogig --repo "postgresql://geogig-db/gis/public/gold?user=docker&password=docker" add
+geogig --repo "postgresql://geogig-db/gis/public/gold?user=docker&password=docker" commit -m "Initial version"
+
+or 
+geogig --repo "postgresql://geogig-db/gis/public/gold?user=docker&password=docker" init
+geogig --repo "postgresql://geogig-db/gis/public/gis?user=docker&password=docker" pg import --all --host osm-db --port 5432 --database gis --user docker --password docker
+geogig --repo "postgresql://geogig-db/gis/public/gis?user=docker&password=docker" add
+geogig --repo "postgresql://geogig-db/gis/public/gis?user=docker&password=docker" commit -m "Initial version"
+
+Changing python versions interpreter
+https://askubuntu.com/questions/590027/how-to-set-python-3-as-default-interpreter-in-ubuntu-14-04/590030
+
+nano ~/.bash_aliases
+
+Leaflet -add image to layer control
+L.control.layers(baseMaps,{'<img src="legend/center_lines_3.png" /> center_lines': layer_center_lines_3,'<img src="legend/10m_left_sided_buffer_2.png" /> 10m_left_sided_buffer': layer_10m_left_sided_buffer_2,'<img src="legend/50m_right_sided_buffer_1.png" /> 50m_right_sided_buffer': layer_50m_right_sided_buffer_1,"Google Satellite": overlay_GoogleSatellite_0,}).addTo(map);
 
 
+Insert SRID into postgres
+​INSERT INTO spatial_ref_sys (srid,proj4text) VALUES (40019,'+proj=tmerc +lat_0=0 +lon_0=19 +k=1 +x_0=0 +y_0=0 +axis=enu +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs');
 
+-- Leaflet bbox string
+ map.on('moveend', function() {
+     alert(map.getBounds().toBBoxString());
+    });
+
+Fix locale settings error
+
+-- export LC_ALL=C
+
+-- function to get river name closest to a point
  
+    CREATE OR REPLACE  FUNCTION   finder (latitude double precision, longitude double precision) RETURNS character varying
+    LANGUAGE plpgsql
+    AS $$
+  DECLARE 
+    river_name character varying;
+  BEGIN
+    SELECT entity_name  INTO river_name
+    FROM ngi.hydr_lines_exp
+    WHERE entity_name is not null
+    ORDER BY wkb_geometry <-> st_transform((st_setsrid(st_makepoint(latitude,longitude),4326)),3857)
+    LIMIT 1;
+    RETURN river_name;
+    
+
+  END
+$$;
+
+select finder(24.23,-29.79)
+
+regexp_replace( "name" ,'\W+','_')
+
+regexp_replace( "name" ,'[^0-9a-zA-Z]+','_')
 
 
-
+-- Geoserver image url path
+http://maps.kartoza.com/geoserver/styles/bar_2.png
 
 
   
 
 
 
+http://maps.kartoza.com/geoserver/styles/bar_3.png
+
+update bar_charts_url set chart_2_url = replace(chart_2_url,'.png', '.svg');
+update bar_charts_url set chart_3_url = replace(chart_3_url,'.png', '.svg');
+update bar_charts_url set chart_4_url = replace(chart_4_url,'.png', '.svg');
+update bar_charts_url set chart_5_url = replace(chart_5_url,'.png', '.svg');
+update bar_charts_url set chart_6_url = replace(chart_6_url,'.png', '.svg');
+
+146.161
+84.812
+
+-- convert from 3D to 2D in postgres
+SELECT ST_Force_2D(the_geom) FROM 
+
+-- Using gdal-docker
 
 
+export NCS_USER_PREFS=""
+gdal_translate <...>
 
+Example quick get feature_type without geometry geoserver
 
+http://localhost:8600/geoserver/wms?REQUEST=GetFeatureInfo&SERVICE=WMS&VERSION=1.1.1&WIDTH=1&HEIGHT=1&LAYERS=cite:river&QUERY_LAYERS=cite:river&x=1&y=1&TRANSPARENT=TRUE&FORMAT=image/png&BBOX=2869170.8196039926,-2901137.08332483,2874914.9053289257,-2895340.6056358693&SRS=EPSG:3857&STYLES=&buffer=1
 
+reference: http://osgeo-org.1560.x6.nabble.com/WFS-Extract-only-attributes-without-geometry-td3788655.html
 
+-- Retrive features without geometry in Geoserver request
+http://localhost:8600/geoserver/wfs?service=WFS&request=GetFeature&version=1.1.0&typeName=topp:states&propertyName=(STATE_ABBR,UNEMPLOY)
 
+http://localhost:8600/geoserver/wfs?service=WFS&request=GetFeature&version=1.1.0&typeName=topp:river&propertyName=(NAME)&maxfeatures=1&BBOX=2869170.8196039926,-2901137.08332483,2874914.9053289257,-2895340.6056358693
 
+-- Describe featuretype in Geoserver
+http://localhost:8600/geoserver/wms?service=WFS&version=1.0.0&request=DescribeFeatureType&typename=topp:states
 
+https://maps.kartoza.com/geoserver/wfs?SERVICE=WFS&REQUEST=GetFeature&VERSION=1.0.0&TYPENAME=kartoza:secondary_catchment_area&FILTER= <Filter xmlns="http://www.opengis.net/ogc" xmlns:gml="http://www.opengis.net/gml">                <Intersects><PropertyName>geom</PropertyName><gml:Point srsName="EPSG:4326">                <gml:coordinates>25.8,-25.183</gml:coordinates></gml:Point></Intersects></Filter>&PROPERTYNAME=(name)&MAXFEATURES=1&OUTPUTFORMAT=GML3
 
+-- Grant access to future tables
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO readaccess;
 
+-- set xframe in Geoserver
 
+QGIS Server postgres
+postgresql://localhost:5432?sslmode=disable&dbname=mydb&schema=myschema&project=myproject
 
+--Batch update in small numbers
+do {
+  numRowsUpdated = executeUpdate(
+    "UPDATE items SET last_update = ? " +
+    "WHERE ctid IN (SELECT ctid FROM items WHERE last_update IS NULL LIMIT 5000)",
+    now);
+} while (numRowsUpdate > 0);
+
+-- always create index concurently in pg
+CREATE INDEX CONCURRENTLY items_value_idx ON items USING GIN (value jsonb_path_ops);
+
+-- Drop index osm_buildings for FBIS
+CONSTRAINT osm_buildings_pkey PRIMARY KEY (osm_id, id)
+
+- Recreated on staging.fbf
+CREATE TRIGGER z_event_populate_spreadsheet_flood_tg
+    BEFORE INSERT
+    ON public.hazard_event
+    FOR EACH ROW
+    EXECUTE PROCEDURE public.kartoza_populate_spreadsheet_table();
+
+-- Assign permisions to future tables in postgres
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+GRANT SELECT ON TABLES TO geoserver;
+
+-- label using map lout expressions qgis 3
+map_get(item_variables('map1'), 'map_extent') 
+
+-- map grids labels
+case when  @grid_axis = 'y' then  
+
+  substr('ABCDEFGHIJKLMNOPQRST',(@grid_number -to_int(map_y_min( 'grids','main')/1000)*1000+500)/1000,1)
+when  @grid_axis  = 'x'
+then  (  @grid_number  -  to_int( map_x_min('grids','main') /1000)*1000+500  ) / 1000
+end
 

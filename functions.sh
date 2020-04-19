@@ -28,7 +28,7 @@ function remove_first_character {
 function remove_ITIS50V_characters {
         echo "Remove ITIS50V_ from beginning of files "
         echo "----------------------------------------"
-        for file in `ls ITIS50V_*`;
+        for file in `ls *`;
         do echo "removing ITIS50V_ from "  ${file};
             if [[  ${file} == ITIS50V_*   ]];  then
                 rename -v "s/^ITIS50V_//g" * ;
@@ -39,7 +39,7 @@ function remove_ITIS50V_characters {
 }
 
 function remove_other_char {
-        for file in `ls itisv_*`;
+        for file in `ls *`;
         do echo "remove itisv_ from  "${file};
         if [[  ${file} == itisv_*   ]];  then
             rename -v "s/^itisv_//g" * ;
@@ -51,7 +51,7 @@ function remove_other_char {
 function remove_character_v {
         for file in `ls v_*`;
         do echo " character v_ from beginning of file ${file}";
-            if [[  ${file} == v_*   ]];  then
+            if [[  ${file} == *   ]];  then
                 rename -v "s/^v_//g" * ;
             else
                 echo "nothing to do";
@@ -60,7 +60,7 @@ function remove_character_v {
 }
 
 function remove_character_0 {
-        for file in `ls 0v_*`;
+        for file in `ls *`;
         do echo " character v_ from beginning of file ${file}";
             if [[  ${file} == 0v_*   ]];  then
                 rename -v "s/^0v_//g" * ;
@@ -71,10 +71,21 @@ function remove_character_0 {
 }
 
 function remove_character_a {
-        for file in `ls _itis50v_*`;
+        for file in `ls *`;
         do echo " character v_ from beginning of file ${file}";
             if [[  ${file} == _itis50v_*   ]];  then
                 rename -v "s/^_itis50v_//g" * ;
+            else
+                echo "nothing to do";
+            fi
+        done
+}
+
+function remove_character_ab {
+        for file in `ls *`;
+        do echo " character v_ from beginning of file ${file}";
+            if [[  ${file} == _itisv_*   ]];  then
+                rename -v "s/^_itisv_//g" * ;
             else
                 echo "nothing to do";
             fi
@@ -127,7 +138,7 @@ function renaming_merged_blocks {
 function remove_last_underscore {
 
 
-        for file in `ls *_.*`;
+        for file in `ls *`;
         do
             echo "removing the last trailing underscore";
             ext="${file##*.}";
@@ -150,8 +161,8 @@ function load_shp {
        do
           echo  "Loading" ${file};
           ogr2ogr -progress -append -addfields -skipfailures -a_srs "EPSG:4326" -nlt PROMOTE_TO_MULTI -gt 200536 \
-          -addfields -lco GEOMETRY_NAME=geom -f "PostgreSQL" PG:"dbname=gis user=admire  password=babyrasta port=5432"\
-            ${file} -lco SCHEMA=public
+          -addfields -lco GEOMETRY_NAME=geom --config PG_USE_COPY YES -f "PostgreSQL" PG:"dbname=ngi user=admire  password=M@st3rUs3r port=25433 host=localhost" \
+            ${file} -lco SCHEMA=temp
 
        done
 }

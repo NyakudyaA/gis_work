@@ -4,7 +4,7 @@
 
 export PGCLIENTENCODING=latin1
 
-DATA_PATH=/gis/gis_data/ngi_data/raw_vectors
+DATA_PATH=/tmp/1map
 
 
 
@@ -37,6 +37,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_character_ab
         remove_last_underscore
         remove_dates
         remove_numbers
@@ -58,6 +59,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_character_ab
         remove_last_underscore
         remove_dates
         remove_numbers
@@ -79,6 +81,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_character_ab
         remove_last_underscore
         remove_dates
         remove_numbers
@@ -99,6 +102,7 @@ for file in  `ls *.zip`; do
         remove_character_v
         remove_character_0
         remove_character_a
+        remove_character_ab
         remove_last_underscore
         remove_dates
         remove_numbers
@@ -109,6 +113,10 @@ for file in  `ls *.zip`; do
     fi
 
 done
+
+cd ${DATA_PATH}
+
+echo "Finito"
 
 
 
